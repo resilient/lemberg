@@ -1,2 +1,21 @@
 <?php
 
+/**
+ * Implements hook_node_info()
+ */
+function lemberg_node_info() {
+  return array(
+    'lemberg' => array(
+      'name' => t('Lemberg node'),
+      'base' => 'lemberg',
+      'description' => t('Test content type'),
+    )
+  );
+}
+
+/**
+ * Implement hook_form()
+ */
+function lemberg_form($node, $form_state) {
+    return node_content_form($node, $form_state);
+}

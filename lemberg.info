@@ -4,3 +4,6 @@ version = 7.x-1.0
 core = 7.x
 package = Other
 dependencies[] = link
+
+files[] = lemberg.install
+files[] = lemberg.module
