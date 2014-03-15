@@ -5,6 +5,10 @@ core = 7.x
 package = Other
 dependencies[] = views
 dependencies[] = link
+dependencies[] = webform
 
 files[] = lemberg.install
 files[] = lemberg.module
+files[] = lemberg.views_default.inc
+files[] = node--lemberg--even.tpl.php
+files[] = node--lemberg--odd.tpl.php

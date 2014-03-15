@@ -54,7 +54,7 @@ function lemberg_block_view($delta = '') {
     case 'lemberg_last_nodes':
       $block['subject'] = t('Last three lemberg nodes');
       if (user_access('access content')) {
-        $result = get_last_nodes();
+        $result = _lemberg_get_last_nodes();
 
         $items = array();
 
@@ -84,36 +84,6 @@ function lemberg_views_api() {
 }
 
 /**
- * Finds the last nodes.
- */
-function get_last_nodes($count = 3) {
-
-  $nids = db_select('node', 'n')
-      ->fields('n', array('nid'))
-      ->condition('n.type', 'lemberg')
-      ->condition('n.status', NODE_PUBLISHED)
-      ->orderBy('created', 'DESC')
-      ->range(0, $count)
-      ->execute()
-      ->fetchCol();
-
-  $nodes = node_load_multiple($nids);
-
-  return $nodes ? $nodes : array();
-}
-
-
-/**
- * Helper function for re-ordering arrays (needed by theme_registry_alter)
- */
-function _lemberg_insert_after_first_element(&$a, $element) {
-  if(is_array($a)) {
-    $first_element = array_shift($a);
-    array_unshift($a, $first_element, $element);
-  }
-}
-
-/**
  * Implements MODULE_preprocess_HOOK().
  */
 function lemberg_preprocess_node(&$variables) {
@@ -131,4 +101,78 @@ function lemberg_preprocess_node(&$variables) {
     $variables['theme_hook_suggestions'][] = 'node__' . $node->nid;
   }
 
+}
+
+/**
+ * Implements hook_webform_select_options_info().
+ */
+function lemberg_webform_select_options_info() {
+  $items = array();
+  $items['lembergnodes'] = array(
+    'title' => t('Lemberg nodes'),
+    'options callback' => 'webform_options_lemberg_nodes',
+  );
+  return $items;
+}
+
+/**
+ * Webform options info callback.
+ */
+function webform_options_lemberg_nodes() {
+  $nodes = array();
+  $result = _lemberg_get_all_nodes();
+
+  foreach($result as $node) {
+    $nodes[$node->nid] = $node->title;
+  }
+
+  return $nodes;
+}
+
+/**
+ * Finds the last lemberg nodes.
+ */
+function _lemberg_get_last_nodes($count = 3) {
+
+  $nids = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.type', 'lemberg')
+      ->condition('n.status', NODE_PUBLISHED)
+      ->orderBy('created', 'DESC')
+      ->range(0, $count)
+      ->execute()
+      ->fetchCol();
+
+  $nodes = node_load_multiple($nids);
+
+  return $nodes ? $nodes : array();
+}
+
+/**
+ * Finds all lemberg nodes.
+ */
+function _lemberg_get_all_nodes() {
+
+  $nids = db_select('node', 'n')
+      ->fields('n', array('nid'))
+      ->condition('n.type', 'lemberg')
+      ->condition('n.status', NODE_PUBLISHED)
+      ->orderBy('created', 'DESC')
+      ->execute()
+      ->fetchCol();
+
+  $nodes = node_load_multiple($nids);
+
+  return $nodes ? $nodes : array();
+}
+
+
+/**
+ * Helper function for re-ordering arrays (needed by theme_registry_alter)
+ */
+function _lemberg_insert_after_first_element(&$a, $element) {
+  if(is_array($a)) {
+    $first_element = array_shift($a);
+    array_unshift($a, $first_element, $element);
+  }
 }
