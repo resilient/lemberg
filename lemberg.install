@@ -7,6 +7,7 @@ function lemberg_install() {
   node_types_rebuild();
   $types = node_type_get_types();
   node_add_body_field($types['lemberg']);
+  add_link_fields();
 }
 
 /**
@@ -25,5 +26,65 @@ function lemberg_uninstall() {
   }
 
   node_delete_multiple($nodeids);
+  delete_link_fields();
   node_type_delete($ournewtype);
+  field_purge_batch(500);
+}
+
+/**
+ * Install link field function
+ */
+
+function add_link_fields() {
+  foreach (_lemberg_installed_fields() as $field) {
+    field_create_field($field);
+  }
+  foreach (_lemberg_installed_instances() as $fieldinstance) {
+    $fieldinstance['entity_type'] = 'node';
+    $fieldinstance['bundle'] = 'lemberg';
+    field_create_instance($fieldinstance);
+  }
+}
+
+/**
+ * Uninstall link field function
+ */
+
+function delete_link_fields() {
+  foreach (array_keys(_lemberg_installed_fields()) as $field) {
+    field_delete_field($field);
+  }
+  $instances = _lemberg_installed_instances('node', 'lemberg');
+  foreach ($instances as $instance_name => $fieldinstance) {
+    field_delete_instance($fieldinstance);
+  }
+}
+
+function _lemberg_installed_fields() {
+  $t = get_t();
+  return array(
+    'lemberg_link' => array(
+      'field_name' => 'lemberg_link',
+      'label' => $t('Link'),
+      'type' => 'link_field'
+    ),
+  );
+}
+
+function _lemberg_installed_instances() {
+  $t = get_t();
+  return array(
+    'lemberg_link' => array(
+      'field_name' => 'lemberg_link',
+      'type' => 'link_field',
+      'label' => $t('Link'),
+      'widget' => array(
+        'type' => 'link_field'
+      ),
+      'default' => array(
+        'label' => $t('Link'),
+        'type' => 'link_field'
+      )
+    ),
+  );
 }
