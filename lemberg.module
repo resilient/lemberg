@@ -76,12 +76,20 @@ function lemberg_block_view($delta = '') {
 }
 
 /**
+ * Implements hook_views_api().
+ */
+function lemberg_views_api() {
+  return array('api' => 3.0);
+}
+
+/**
  * Finds the last nodes.
  */
 function get_last_nodes($count = 3) {
 
   $nids = db_select('node', 'n')
       ->fields('n', array('nid'))
+      ->condition('n.type', 'lemberg')
       ->condition('n.status', NODE_PUBLISHED)
       ->orderBy('created', 'DESC')
       ->range(0, $count)

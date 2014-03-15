@@ -3,6 +3,7 @@ description = Test module for Lemberg Solutions
 version = 7.x-1.0
 core = 7.x
 package = Other
+dependencies[] = views
 dependencies[] = link
 
 files[] = lemberg.install
