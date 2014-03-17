@@ -41,6 +41,7 @@ function lemberg_block_info() {
   $blocks['lemberg_last_nodes'] = array(
     'info' => t('Last three lemberg nodes'),
     'cache' => DRUPAL_CACHE_PER_ROLE,
+    'status' => TRUE,
     'region' => 'sidebar_first',
   );
   return $blocks;
